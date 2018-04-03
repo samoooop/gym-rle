@@ -127,7 +127,8 @@ class RleEnv(gym.Env, utils.EzPickle):
             reward += self.rle.act(action)
         ob = self._get_obs()
 
-        return ob, reward, self.rle.game_over(), {"rle.lives": self.rle.lives()}
+        lives = self._get_ram()[124]
+        return ob, reward, self.rle.game_over(), {"rle.lives": self.rle.lives(), "gradius_lives": lives}
 
     def _get_image(self):
         self.rle.getScreenRGB(self._buffer)
@@ -167,3 +168,15 @@ class RleEnv(gym.Env, utils.EzPickle):
 
     def get_action_meanings(self):
         return [get_action_meaning(i) for i in self._action_set]
+
+    def save_state(self):
+        self.rle.saveState()
+    def load_state(self):
+        self.rle.loadState()
+
+    def get_state_string(self):
+        return self.rle.getStateString()
+
+    def load_state_string(self, target_string):
+        self.rle.loadStateString(target_string)
+
